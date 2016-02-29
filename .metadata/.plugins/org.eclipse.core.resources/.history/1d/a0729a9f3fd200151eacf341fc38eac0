@@ -1,7 +1,0 @@
-package projet
-
-class Emargement {
-
-    static constraints = {
-    }
-}

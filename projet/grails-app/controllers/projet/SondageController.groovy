@@ -10,9 +10,120 @@ class SondageController {
 
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
+	
+	def answer(Sondage sondageInstance) {
+		if(session.user==null)
+		{
+			redirect(uri: "")
+		}
+		if(session.user.droit)
+		{
+			redirect(uri: "")
+		}
+		respond sondageInstance
+    }
+	
+	def saveAnswer() {
+		
+		def sondageInstance = Sondage.findById(params.idSondage);
+		println sondageInstance.enseignement.nom
+		if (sondageInstance == null) {
+			notFound()
+			return
+		}
+
+		sondageInstance.save();
+		
+		def reponse = new Reponse(note: params.note);
+		println reponse.note
+		
+		sondageInstance.addToReponses reponse;
+		sondageInstance.save();
+		println reponse.sondage.id
+		reponse.save();
+		redirect(uri: "")
+		def user=new Utilisateur();
+		user=Utilisateur.findById(session.user.id)
+		def ens=sondageInstance.enseignement
+		projet.Emargement.findAll("from Emargement as e where e.enseignement=?", [ens]).each {emar ->
+			println "user="+ emar.utilisateur.prenom;
+			println "session"+session.user.prenom
+				if(emar.utilisateur.id==user.id)
+				{
+					println "hey"
+					println emar.id
+					user.removeFromEmargement emar
+					ens.removeFromEmargement emar;
+					emar.delete();
+					user.save();
+					ens.save()
+					println "1hey1"
+					def emarg = new Emargement(aRepondu: true);
+					user.addToEmargement emarg
+					ens.addToEmargement emarg;
+					user.save();
+					ens.save()
+				}
+			
+			
+		}
+		
+		
+		
+		
+	}
+	
+	def voirResultat()
+	{
+		session.user = Utilisateur.findByIdentifiant(params.identifiant)
+		if(session.user?.droit)
+		{
+			redirect(action:"voirResultatAdmin7", params:params);
+		}
+		else
+		{
+			redirect(action:"voirResultatEleve10", params:params)
+		}
+	}
+	
+	def voirResultatAdmin7()
+	{
+		return params
+	}
+	
+	def voirResultatEleve10()
+	{
+		return params
+	}
+	
+	def modifier()
+	{
+		redirect(action:"edit", params:params)
+	}
+	
+	def supprimer()
+	{
+		redirect(action:"delete",params:params)
+	}
+	
+	def creersondage4()
+	{
+		return params
+		//redirect(action:"create",params:params)
+	}
+	
+	def voirsondage()
+	{
+		redirect(action:"show", params:params);
+	}
+	
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond Sondage.list(params), model:[sondageInstanceCount: Sondage.count()]
+		if(session.user==null)
+		{
+			redirect(uri: "")
+		}
+		
+		 [sondageInstanceList: Sondage.list(params), emargementInstanceList: Emargement.list(params)]
     }
 
     def show(Sondage sondageInstance) {
@@ -45,6 +156,8 @@ class SondageController {
             '*' { respond sondageInstance, [status: CREATED] }
         }
     }
+	
+	
 
     def edit(Sondage sondageInstance) {
         respond sondageInstance

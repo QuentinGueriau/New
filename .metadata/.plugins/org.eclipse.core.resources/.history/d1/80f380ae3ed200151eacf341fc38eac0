@@ -1,8 +1,0 @@
-package projet
-
-class Reponse {
-	static belongsTo = [sondage: Sondage];
-	
-    static constraints = {
-    }
-}

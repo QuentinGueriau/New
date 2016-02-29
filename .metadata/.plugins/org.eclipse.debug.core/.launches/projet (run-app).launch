@@ -16,6 +16,6 @@
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="projet"/>
 <stringAttribute key="org.grails.ide.eclipse.core.ORG_SCRIPT" value="run-app"/>
 <stringAttribute key="org.grails.ide.eclipse.core.PROJECT_DIR" value="C:\Users\Dewey\Documents\GitHub\leclubdes5\projet"/>
-<stringAttribute key="org.grails.ide.eclipse.core.SCRIPT" value="run-app"/>
+<stringAttribute key="org.grails.ide.eclipse.core.SCRIPT" value="-Dserver.port=8090 run-app"/>
 <stringAttribute key="process_factory_id" value="org.grails.ide.eclipse.core.processFactory"/>
 </launchConfiguration>

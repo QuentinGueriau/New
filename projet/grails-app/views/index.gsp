@@ -1,122 +1,206 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta name="layout" content="main"/>
-		<title>Welcome to Grails</title>
-		<style type="text/css" media="screen">
-			#status {
-				background-color: #eee;
-				border: .2em solid #fff;
-				margin: 2em 2em 1em;
-				padding: 1em;
-				width: 12em;
-				float: left;
-				-moz-box-shadow: 0px 0px 1.25em #ccc;
-				-webkit-box-shadow: 0px 0px 1.25em #ccc;
-				box-shadow: 0px 0px 1.25em #ccc;
-				-moz-border-radius: 0.6em;
-				-webkit-border-radius: 0.6em;
-				border-radius: 0.6em;
-			}
+<head>
+<meta name="layout" content="main" />
+<title>Connexion</title>
 
-			.ie6 #status {
-				display: inline; /* float double margin fix http://www.positioniseverything.net/explorer/doubled-margin.html */
-			}
+</head>
+<body>
+ <g:if test="${session.user == null}">
+ 
+ <style type="text/css" media="screen">
+#status {
+	background-color: #eee;
+	border: .2em solid #fff;
+	margin: 2em 2em 1em;
+	padding: 1em;
+	width: 12em;
+	float: left;
+	-moz-box-shadow: 0px 0px 1.25em #ccc;
+	-webkit-box-shadow: 0px 0px 1.25em #ccc;
+	box-shadow: 0px 0px 1.25em #ccc;
+	-moz-border-radius: 0.6em;
+	-webkit-border-radius: 0.6em;
+	border-radius: 0.6em;
+}
 
-			#status ul {
-				font-size: 0.9em;
-				list-style-type: none;
-				margin-bottom: 0.6em;
-				padding: 0;
-			}
+.ie6 #status {
+	display: inline;
+	/* float double margin fix http://www.positioniseverything.net/explorer/doubled-margin.html */
+}
 
-			#status li {
-				line-height: 1.3;
-			}
+#status ul {
+	font-size: 0.9em;
+	list-style-type: none;
+	margin-bottom: 0.6em;
+	padding: 0;
+}
 
-			#status h1 {
-				text-transform: uppercase;
-				font-size: 1.1em;
-				margin: 0 0 0.3em;
-			}
+#status li {
+	line-height: 1.3;
+}
 
-			#page-body {
-				margin: 2em 1em 1.25em 18em;
-			}
+#status h1 {
+	text-transform: uppercase;
+	font-size: 1.1em;
+	margin: 0 0 0.3em;
+}
 
-			h2 {
-				margin-top: 1em;
-				margin-bottom: 0.3em;
-				font-size: 1em;
-			}
+#page-body {
+	margin: 2em 1em 1.25em 18em;
+}
 
-			p {
-				line-height: 1.5;
-				margin: 0.25em 0;
-			}
+h2 {
+	margin-top: 1em;
+	margin-bottom: 0.3em;
+	font-size: 1em;
+}
 
-			#controller-list ul {
-				list-style-position: inside;
-			}
+p {
+	line-height: 1.5;
+	margin: 0.25em 0;
+}
 
-			#controller-list li {
-				line-height: 1.3;
-				list-style-position: inside;
-				margin: 0.25em 0;
-			}
+#controller-list ul {
+	list-style-position: inside;
+}
 
-			@media screen and (max-width: 480px) {
-				#status {
-					display: none;
-				}
+#controller-list li {
+	line-height: 1.3;
+	list-style-position: inside;
+	margin: 0.25em 0;
+}
 
-				#page-body {
-					margin: 0 1em 1em;
-				}
+@media screen and (max-width: 480px) {
+	#status {
+		display: none;
+	}
+	#page-body {
+		margin: 0 1em 1em;
+	}
+	#page-body h1 {
+		margin-top: 0;
+	}
+}
 
-				#page-body h1 {
-					margin-top: 0;
-				}
-			}
-		</style>
-	</head>
-	<body>
-		<a href="#page-body" class="skip"><g:message code="default.link.skip.label" default="Skip to content&hellip;"/></a>
-		<div id="status" role="complementary">
-			<h1>Application Status</h1>
-			<ul>
-				<li>App version: <g:meta name="app.version"/></li>
-				<li>Grails version: <g:meta name="app.grails.version"/></li>
-				<li>Groovy version: ${GroovySystem.getVersion()}</li>
-				<li>JVM version: ${System.getProperty('java.version')}</li>
-				<li>Reloading active: ${grails.util.Environment.reloadingAgentEnabled}</li>
-				<li>Controllers: ${grailsApplication.controllerClasses.size()}</li>
-				<li>Domains: ${grailsApplication.domainClasses.size()}</li>
-				<li>Services: ${grailsApplication.serviceClasses.size()}</li>
-				<li>Tag Libraries: ${grailsApplication.tagLibClasses.size()}</li>
-			</ul>
-			<h1>Installed Plugins</h1>
-			<ul>
-				<g:each var="plugin" in="${applicationContext.getBean('pluginManager').allPlugins}">
-					<li>${plugin.name} - ${plugin.version}</li>
-				</g:each>
-			</ul>
-		</div>
-		<div id="page-body" role="main">
-			<h1>Welcome to Grails</h1>
-			<p>Congratulations, you have successfully started your first Grails application! At the moment
-			   this is the default page, feel free to modify it to either redirect to a controller or display whatever
-			   content you may choose. Below is a list of controllers that are currently deployed in this application,
-			   click on each to execute its default action:</p>
+#login {
+	text-align: center;
+	margin-bottom: 20px;
+	margin-left: 25px;
+	margin-top: 30px;
+}
 
-			<div id="controller-list" role="navigation">
-				<h2>Available Controllers:</h2>
-				<ul>
-					<g:each var="c" in="${grailsApplication.controllerClasses.sort { it.fullName } }">
-						<li class="controller"><g:link controller="${c.logicalPropertyName}">${c.fullName}</g:link></li>
-					</g:each>
-				</ul>
-			</div>
-		</div>
-	</body>
+#password {
+	text-align: center;
+	margin-bottom: 20px;
+	margin-left: 25px;
+	margin-top: 30px;
+}
+
+#mdp {
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+#bouton {
+	text-align: center;
+	margin-left: 0px;
+}
+
+footer {
+	background: #c89a1f;
+	height: 2em;
+	padding-top: 1em;
+}
+
+#tableau {
+	background: #cccccc;
+}
+
+#home {
+	text-align: center;
+}
+
+#texte {
+	text-align: center;
+}
+
+#utilisateur {
+	text-align: center;
+}
+
+#banniere {
+	max-width: 960px;
+	height: auto;
+}
+</style>
+ 
+ 
+	<div id="banniere" role="banner">
+		<a href="${createLink(uri: '/')}"><asset:image src="Test4.png"
+				alt="Test" /></a>
+	</div>
+	
+	<table id=tableau>
+
+		<tr>
+
+			<td id=home class="nav" role="navigation"><a class="home"
+				href="${createLink(uri: '/')}"><g:message
+						code="default.home.label" /></a></td>
+
+			<td id=texte><font face="arial"> <font size="4pt">
+						<b> CONNEXION</b>
+				</font></font></td>
+
+					
+		</tr>
+
+	</table>
+
+			
+
+
+	<g:form controller="utilisateur" action="login"> 
+	<p id="login">
+		<label for="identifiant">Identifiant :</label> <input id="identifiant"
+			name="identifiant" required />
+	</p>
+
+	<p id="mdp">
+		<label for="pwd1">Mot de passe :</label> <input type=password
+			id="pwd1" name="mdp" required " />
+	</p>
+
+	<p id="bouton">
+		<input type="submit" value="Envoyer">
+	</p>
+	</g:form>
+
+<p>
+<br/>
+<br/>
+</p>
+
+
+
+	<footer>
+		<div id=sondage>Le Club des 5 - tous droits réservés</div>
+	</footer>
+</g:if>
+<g:if test="${session.user?.droit == true}">
+<g:javascript>
+window.location.href = '<g:createLink controller="sondage"  />';
+</g:javascript>
+
+</g:if>
+<g:if test="${session.user?.droit == false}">	
+
+<g:javascript>
+window.location.href = '<g:createLink controller="sondage"  />';
+</g:javascript>
+
+</g:if>
+	
+</body>
 </html>

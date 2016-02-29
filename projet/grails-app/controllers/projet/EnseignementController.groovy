@@ -11,8 +11,11 @@ class EnseignementController {
     static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
     def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond Enseignement.list(params), model:[enseignementInstanceCount: Enseignement.count()]
+        if(session.user==null)
+		{
+			redirect(uri: "")
+		}
+		[enseignementInstanceList: Enseignement.list(params), sondageInstanceList: Sondage.list(params)]
     }
 
     def show(Enseignement enseignementInstance) {
@@ -21,32 +24,15 @@ class EnseignementController {
     }
 
     def create() {
-        [enseignementInstance: new Enseignement(params), utilisateurInstanceList: Utilisateur.list(params)]
+		if(session.user==null)
+		{
+			redirect(uri: "")
+		}
+		[enseignementInstance: new Enseignement(params), utilisateurInstanceList: Utilisateur.list(params)]
     }
 
     @Transactional
-   /* def save(Enseignement enseignementInstance) {
-        if (enseignementInstance == null) {
-            notFound()
-            return
-        }
-
-        if (enseignementInstance.hasErrors()) {
-            respond enseignementInstance.errors, view:'create'
-            return
-        }
-
-        enseignementInstance.save flush:true
-
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'enseignement.label', default: 'Enseignement'), enseignementInstance.id])
-                redirect enseignementInstance
-            }
-            '*' { respond enseignementInstance, [status: CREATED] }
-        }
-    }*/
-	
+  
 	def save(Enseignement enseignementInstance) {
 		
 		
@@ -61,6 +47,7 @@ class EnseignementController {
 		}
 
 		enseignementInstance.save()
+		
 		
 		projet.Utilisateur.findAll().each {user ->
 			if(user?.droit==false)
@@ -80,6 +67,16 @@ class EnseignementController {
 		
 		
 		enseignementInstance.save()
+	
+		if(params.sdg!=null)
+		{
+			def sondage = new Sondage(dateDebut: params.dateDebut, dateFin: params.dateFin);
+			
+			
+			enseignementInstance.addToSondage sondage;
+			enseignementInstance.save()
+		}
+		
 		
 		 flush:true
 

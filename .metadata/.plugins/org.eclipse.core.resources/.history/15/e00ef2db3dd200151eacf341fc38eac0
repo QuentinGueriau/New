@@ -1,7 +1,0 @@
-package projet
-
-class Sondage {
-	date dateDebut;
-    static constraints = {
-    }
-}

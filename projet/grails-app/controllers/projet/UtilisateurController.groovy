@@ -8,98 +8,162 @@ import grails.transaction.Transactional
 @Transactional(readOnly = true)
 class UtilisateurController {
 
-    static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+	static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
 
-    def index(Integer max) {
-        params.max = Math.min(max ?: 10, 100)
-        respond Utilisateur.list([nom:"prenom1.nom1"]), model:[utilisateurInstanceCount: Utilisateur.count()]
-		//respond Utilisateur.findAllWhere(nom:'prenom1.nom1')
-    }
 
-    def show(Utilisateur utilisateurInstance) {
-        respond utilisateurInstance
-    }
+	def index() {
+	}
 
-    def create() {
-        respond new Utilisateur(params)
-    }
+	def logout() {
+		session.user=null;
+		redirect(uri: "")
 
-    @Transactional
-    def save(Utilisateur utilisateurInstance) {
-        if (utilisateurInstance == null) {
-            notFound()
-            return
-        }
+		
+	}
+	
+	
+	def login() {
+		println params
+		
+		 
+		session.user=Utilisateur.findByIdentifiant(params.identifiant);
+		if(session.user!=null) {
+			if(session.user?.mdp==params.mdp) {
+				if(session.user?.droit)
+				{
+					//redirect action : 'DashboardAdministrateur2'
+					redirect(uri: "/sondage/")
+				}
+				else{
+					redirect(uri: "/sondage/")
+				}
+				
+			}
+			else{
+				render("mauvaise combinason identifiant mdp")
+			}
+		}
 
-        if (utilisateurInstance.hasErrors()) {
-            respond utilisateurInstance.errors, view:'create'
-            return
-        }
+		else {
+			render("mauvaise combinason identifiant mdp")
+		}
+	}
+	def DashboardEleve3() {
+		println session.user?.nom+" "+session.user?.prenom+" "+session.user?.identifiant+" "+session.droit
+		render("eleve")
+	}
+	def DashboardAdministrateur2() {
+		println session.user?.nom+" "+session.user?.prenom+" "+session.user?.identifiant+" "+session.droit
+		render("admin")
+	}
 
-        utilisateurInstance.save flush:true
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.created.message', args: [message(code: 'utilisateur.label', default: 'Utilisateur'), utilisateurInstance.id])
-                redirect utilisateurInstance
-            }
-            '*' { respond utilisateurInstance, [status: CREATED] }
-        }
-    }
+	def show(Utilisateur utilisateurInstance) {
+		respond utilisateurInstance
+	}
 
-    def edit(Utilisateur utilisateurInstance) {
-        respond utilisateurInstance
-    }
+	def create() {
+		if(session.user==null)
+		{
+			redirect(uri: "")
+		}
+		respond new Utilisateur(params)
+	}
 
-    @Transactional
-    def update(Utilisateur utilisateurInstance) {
-        if (utilisateurInstance == null) {
-            notFound()
-            return
-        }
+	@Transactional
+	def save(Utilisateur utilisateurInstance) {
+		if (utilisateurInstance == null) {
+			notFound()
+			return
+		}
 
-        if (utilisateurInstance.hasErrors()) {
-            respond utilisateurInstance.errors, view:'edit'
-            return
-        }
+		if (utilisateurInstance.hasErrors()) {
+			respond utilisateurInstance.errors, view:'create'
+			return
+		}
+		
+		
+		utilisateurInstance.identifiant=utilisateurInstance.prenom+"."+utilisateurInstance.nom
+		utilisateurInstance.mdp="azerty"
+		utilisateurInstance.save flush:true
 
-        utilisateurInstance.save flush:true
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.created.message', args: [
+					message(code: 'utilisateur.label', default: 'Utilisateur'),
+					utilisateurInstance.id
+				])
+				redirect utilisateurInstance
+			}
+			'*' {
+				respond utilisateurInstance, [status: CREATED]
+			}
+		}
+	}
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.updated.message', args: [message(code: 'Utilisateur.label', default: 'Utilisateur'), utilisateurInstance.id])
-                redirect utilisateurInstance
-            }
-            '*'{ respond utilisateurInstance, [status: OK] }
-        }
-    }
+	def edit(Utilisateur utilisateurInstance) {
+		respond utilisateurInstance
+	}
 
-    @Transactional
-    def delete(Utilisateur utilisateurInstance) {
+	@Transactional
+	def update(Utilisateur utilisateurInstance) {
+		//changer de mot passe
+		if (utilisateurInstance == null) {
+			notFound()
+			return
+		}
 
-        if (utilisateurInstance == null) {
-            notFound()
-            return
-        }
+		if (utilisateurInstance.hasErrors()) {
+			respond utilisateurInstance.errors, view:'edit'
+			return
+		}
+		utilisateurInstance.mdp=params.password;
+		utilisateurInstance.save flush:true
 
-        utilisateurInstance.delete flush:true
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.updated.message', args: [
+					message(code: 'Utilisateur.label', default: 'Utilisateur'),
+					utilisateurInstance.id
+				])
+				redirect(uri: "/sondage/")
+			}
+			'*'{ respond utilisateurInstance, [status: OK] }
+		}
+	}
 
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.deleted.message', args: [message(code: 'Utilisateur.label', default: 'Utilisateur'), utilisateurInstance.id])
-                redirect action:"index", method:"GET"
-            }
-            '*'{ render status: NO_CONTENT }
-        }
-    }
+	@Transactional
+	def delete(Utilisateur utilisateurInstance) {
 
-    protected void notFound() {
-        request.withFormat {
-            form multipartForm {
-                flash.message = message(code: 'default.not.found.message', args: [message(code: 'utilisateur.label', default: 'Utilisateur'), params.id])
-                redirect action: "index", method: "GET"
-            }
-            '*'{ render status: NOT_FOUND }
-        }
-    }
+		if (utilisateurInstance == null) {
+			notFound()
+			return
+		}
+
+		utilisateurInstance.delete flush:true
+
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.deleted.message', args: [
+					message(code: 'Utilisateur.label', default: 'Utilisateur'),
+					utilisateurInstance.id
+				])
+				redirect action:"index", method:"GET"
+			}
+			'*'{ render status: NO_CONTENT }
+		}
+	}
+
+	protected void notFound() {
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.not.found.message', args: [
+					message(code: 'utilisateur.label', default: 'Utilisateur'),
+					params.id
+				])
+				redirect action: "index", method: "GET"
+			}
+			'*'{ render status: NOT_FOUND }
+		}
+	}
 }

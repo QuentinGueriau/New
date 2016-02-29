@@ -1,9 +1,0 @@
-package projet
-
-class Enseignement {
-	String nom;
-	static hasOne = [sondage: Sondage]
-	static hasMany = [emargement: Emargement]
-    static constraints = {
-    }
-}

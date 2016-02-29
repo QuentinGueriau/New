@@ -1,0 +1,26 @@
+
+
+
+
+<div class="fieldcontain ${hasErrors(bean: UtilisateurInstance, field: 'nom', 'error')} required">
+	<label for="nom">
+		<g:message code="Utilisateur.nom.label" default="Nom" />
+		<span class="required-indicator">*</span>
+	</label>
+	<g:textField name="nom" required="" value=""/>
+
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: UtilisateurInstance, field: 'mdp', 'error')} required">
+	<label for="mdp">
+		<g:message code="Utilisateur.mdp.label" default="mdp" />
+		<span class="required-indicator">*</span>
+	</label>
+	<g:passwordField name="mdp" required="" value=""/>
+
+</div>
+
+
+
+
+

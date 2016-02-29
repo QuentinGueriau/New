@@ -1,0 +1,185 @@
+package projet
+
+
+
+import static org.springframework.http.HttpStatus.*
+import grails.transaction.Transactional
+
+@Transactional(readOnly = true)
+class UtilisateurController {
+
+	static allowedMethods = [save: "POST", update: "PUT", delete: "DELETE"]
+
+
+	def index() {
+	}
+
+	def login() {
+		println params
+		/*Utilisateur.findAll().each {user ->
+			
+		 if(user?.identifiant==params.identifiant) {
+			 println "user mdp "+session.user?.mdp
+			 println "mdp "+params.mdp
+		 
+		 if(user?.mdp==params.mdp) {
+			 session.user=user;
+			 session.droit=user?.droit
+			 if(user?.droit==false) {
+				 flash.action='DashboardEleve3'
+				 //redirect action : 'DashboardEleve3'
+			 }
+			 else {
+				 flash.action = 'DashboardAdministrateur2'
+				 //redirect action : 'DashboardAdministrateur2'
+			 }
+		 }
+		 else 
+		 {
+			 render("mauvaise combinason identifiant mdp")
+		 }
+			 //println flash.action
+			 //redirect action : flash.action
+		 }
+		 else
+		 	render("mauvaise combinason identifiant mdp")
+		 }*/
+		 
+		session.user=Utilisateur.findByIdentifiant(params.identifiant);
+		println session.user
+		if(session.user!=null) {
+			println "user mdp "+session.user?.mdp
+			println "mdp "+params.mdp
+			if(session.user?.mdp==params.mdp) {
+				if(session.user?.droit)
+				{
+					//redirect action : 'DashboardAdministrateur2'
+					redirect(uri: "../")
+				}
+				else{
+					redirect action : 'DashboardEleve3'
+				}
+				
+			}
+			else{
+				render("mauvaise combinason identifiant mdp")
+			}
+		}
+
+		else {
+			render("mauvaise combinason identifiant mdp")
+		}
+	}
+	def DashboardEleve3() {
+		println session.user?.nom+" "+session.user?.prenom+" "+session.user?.identifiant+" "+session.droit
+		render("eleve")
+	}
+	def DashboardAdministrateur2() {
+		println session.user?.nom+" "+session.user?.prenom+" "+session.user?.identifiant+" "+session.droit
+		render("admin")
+	}
+
+
+	def show(Utilisateur utilisateurInstance) {
+		respond utilisateurInstance
+	}
+
+	def create() {
+		respond new Utilisateur(params)
+	}
+
+	@Transactional
+	def save(Utilisateur utilisateurInstance) {
+		if (utilisateurInstance == null) {
+			notFound()
+			return
+		}
+
+		if (utilisateurInstance.hasErrors()) {
+			respond utilisateurInstance.errors, view:'create'
+			return
+		}
+		utilisateurInstance.identifiant=utilisateurInstance.prenom+"."+utilisateurInstance.nom
+
+		utilisateurInstance.save flush:true
+
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.created.message', args: [
+					message(code: 'utilisateur.label', default: 'Utilisateur'),
+					utilisateurInstance.id
+				])
+				redirect utilisateurInstance
+			}
+			'*' {
+				respond utilisateurInstance, [status: CREATED]
+			}
+		}
+	}
+
+	def edit(Utilisateur utilisateurInstance) {
+		respond utilisateurInstance
+	}
+
+	@Transactional
+	def update(Utilisateur utilisateurInstance) {
+		//changer de mot passe
+		if (utilisateurInstance == null) {
+			notFound()
+			return
+		}
+
+		if (utilisateurInstance.hasErrors()) {
+			respond utilisateurInstance.errors, view:'edit'
+			return
+		}
+
+		utilisateurInstance.save flush:true
+
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.updated.message', args: [
+					message(code: 'Utilisateur.label', default: 'Utilisateur'),
+					utilisateurInstance.id
+				])
+				redirect utilisateurInstance
+			}
+			'*'{ respond utilisateurInstance, [status: OK] }
+		}
+	}
+
+	@Transactional
+	def delete(Utilisateur utilisateurInstance) {
+
+		if (utilisateurInstance == null) {
+			notFound()
+			return
+		}
+
+		utilisateurInstance.delete flush:true
+
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.deleted.message', args: [
+					message(code: 'Utilisateur.label', default: 'Utilisateur'),
+					utilisateurInstance.id
+				])
+				redirect action:"index", method:"GET"
+			}
+			'*'{ render status: NO_CONTENT }
+		}
+	}
+
+	protected void notFound() {
+		request.withFormat {
+			form multipartForm {
+				flash.message = message(code: 'default.not.found.message', args: [
+					message(code: 'utilisateur.label', default: 'Utilisateur'),
+					params.id
+				])
+				redirect action: "index", method: "GET"
+			}
+			'*'{ render status: NOT_FOUND }
+		}
+	}
+}
